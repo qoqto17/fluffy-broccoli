@@ -1,1 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>저메탄 사료 비교 진단 (MVP)</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+<div class="app-wrap">
+
+  <!-- ============ 화면1: 랜딩 ============ -->
+  <section id="screen-landing" class="screen active">
+    <div class="card">
+      <span class="badge">MVP 데모</span>
+      <h1>내 농장에서 저메탄 사료로 바꾸면<br>비용과 조건이 어떻게 달라질까요?</h1>
+      <p class="sub">축종을 선택하고 시작해주세요.</p>
+
+      <div class="species-select">
+        <button class="species-btn" data-species="hanwoo">한우 비육</button>
+        <button class="species-btn" data-species="dairy">젖소 착유</button>
+      </div>
+
+      <p class="disclaimer-small">
+        ※ 본 서비스는 가설 검증을 위한 초기 데모입니다. 실제 사료 처방·구매·컨설팅을 대신하지 않습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 화면2: 농장 조건 입력 ============ -->
+  <section id="screen-input" class="screen">
+    <div class="card">
+      <h2>농장 조건 입력</h2>
+      <p class="sub" id="species-echo">-</p>
+
+      <form id="farm-form">
+
+        <label>사육규모(두수)
+          <input type="number" id="headcount" min="1" placeholder="예: 60" required>
+        </label>
+
+        <label>사육단계
+          <select id="stage" required>
+            <option value="">선택해주세요</option>
+          </select>
+        </label>
+
+        <label>현재 급여 사료
+          <select id="currentFeed" required>
+            <option value="">선택해주세요</option>
+            <option value="compound">일반 배합사료</option>
+            <option value="tmr">자가 TMR(섬유질배합사료)</option>
+            <option value="mixed">배합사료+조사료 혼합급여</option>
+          </select>
+        </label>
+
+        <label>현재 사료비 (선택, 월 만원 기준 — 모르면 비워두세요)
+          <input type="number" id="feedCost" min="0" placeholder="예: 350">
+        </label>
+
+        <label>비교할 저메탄 사료·첨가제 후보
+          <select id="candidate" required>
+            <option value="">선택해주세요</option>
+            <option value="thiamin">국산 저메탄 소재(티아민이인산 계열, 연구단계)</option>
+            <option value="etc">기타(직접 입력)</option>
+          </select>
+        </label>
+
+        <label id="candidate-etc-wrap" class="hidden">후보 제품명(직접 입력)
+          <input type="text" id="candidateEtc" placeholder="예: OO사 저메탄 첨가제">
+        </label>
+
+        <label>지역(선택)
+          <input type="text" id="region" placeholder="예: 충남 홍성군">
+        </label>
+
+        <div class="consent-box">
+          <label class="consent-label">
+            <input type="checkbox" id="consent" required>
+            <span>
+              입력하신 정보는 <b>서비스 검증(가설 확인) 목적</b>으로만 사용되며,
+              결과 확인 및 피드백 분석을 위해 저장됩니다. 이 목적 외에는 사용하지 않습니다.
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-submit" disabled>비교 결과 확인하기</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ 화면3: 결과(처리중 + 비교표 + AI 리포트) ============ -->
+  <section id="screen-result" class="screen">
+    <div class="card">
+
+      <div id="processing" class="processing">
+        <div class="spinner"></div>
+        <p>입력하신 조건과 공식자료를 비교하는 중입니다...</p>
+      </div>
+
+      <div id="result-content" class="hidden">
+        <span class="badge">공식자료 기반 비교 (데모)</span>
+        <h2>현재 사료 vs 저메탄 사료 후보</h2>
+
+        <table class="compare-table">
+          <thead>
+            <tr><th>항목</th><th>현재 사료</th><th>저메탄 사료 후보</th></tr>
+          </thead>
+          <tbody id="compare-body">
+          </tbody>
+        </table>
+
+        <div class="report-box">
+          <h3>AI 맞춤 판단 리포트</h3>
+          <ol id="ai-report" class="report-list"></ol>
+        </div>
+
+        <div class="hypothesis-box">
+          <b>[미검증 가설/추가 검증 필요]</b> 정책 강화·환경 요구 확대·한우 공급 감소에 따른 향후 가격 상승 가능성을 고려하면,
+          저메탄 사료 도입 비용을 '생산 지속을 위한 투자'로 볼 여지가 있다는 관점이 있습니다.
+          다만 이는 사업계획상의 가설이며, 실제 경제성·수익성 개선을 의미하지 않습니다.
+        </div>
+
+        <div class="disclaimer-box">
+          이 결과는 공식자료(농림축산식품부 저메탄사료 직불단가, 국립축산과학원 사양표준, 배합사료 평균가격)를
+          바탕으로 한 참고용 비교입니다. 근거가 확인되지 않은 항목은 '확인 필요'로 표시했으며,
+          특정 제품의 안전성·효능·경제성 개선을 확정하지 않습니다.
+        </div>
+
+        <button class="btn-primary" id="btn-to-feedback">이 결과에 대해 의견 남기기</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 화면4: 피드백 ============ -->
+  <section id="screen-feedback" class="screen">
+    <div class="card">
+      <h2>이 결과가 저메탄 사료 도입 여부를<br>판단하는 데 도움이 되었나요?</h2>
+
+      <div class="choice-group vertical" id="choice-group">
+        <button class="choice-btn" data-value="very_helpful">매우 도움됨</button>
+        <button class="choice-btn" data-value="helpful">도움됨</button>
+        <button class="choice-btn" data-value="not_much">별로 도움 안 됨</button>
+        <button class="choice-btn" data-value="not_at_all">전혀 도움 안 됨</button>
+      </div>
+
+      <p class="sub">가장 부족했던 정보는 무엇인가요?</p>
+      <div class="choice-group vertical" id="missing-group">
+        <button class="choice-btn small" data-value="price">가격</button>
+        <button class="choice-btn small" data-value="productivity">생산성</button>
+        <button class="choice-btn small" data-value="reduction">메탄저감효과</button>
+        <button class="choice-btn small" data-value="subsidy">지원금</button>
+        <button class="choice-btn small" data-value="etc">기타</button>
+      </div>
+
+      <label class="feedback-label">
+        추가로 남기고 싶은 의견 (선택)
+        <textarea id="feedback-text" rows="3" placeholder="예: 실제 첨가제 가격이 언제쯤 나올지 궁금해요"></textarea>
+      </label>
+
+      <button class="btn-primary" id="btn-submit-feedback" disabled>의견 제출하기</button>
+    </div>
+  </section>
+
+  <!-- ============ 화면5: 완료 ============ -->
+  <section id="screen-done" class="screen">
+    <div class="card center">
+      <h2>소중한 의견 감사합니다 🙏</h2>
+      <p class="sub">보내주신 의견은 서비스 검증에 활용됩니다.</p>
+      <button class="btn-secondary" id="btn-restart">처음으로 돌아가기</button>
+    </div>
+  </section>
+
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
